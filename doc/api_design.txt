@@ -1,0 +1,178 @@
+REQUEST: user/create/
+    Required parameters: 
+    - name: string
+    - phone: string
+    - email: string
+    - password: string
+
+RESPONSE: 
+   status
+
+
+REQUEST: raffle/create/
+    Required parameters: 
+    - user_id  
+    - game_date
+    - prize
+	- winner_determined_by 
+    - price 
+    - total_tickets 
+    - numbers_per_ticket 
+	- style_id
+
+RESPONSE: 
+   id -- (integer) id of the raffle created
+
+ACTIONS:
+    Creates raffle, tickets and digits
+
+
+
+REQUEST: raffle/get_details/
+    Required parameters: 
+    - raffle_id
+    
+RESPONSE: 
+    - id -- (integer) id of the raffle created
+    - game_date
+    - prize
+	- winner_determined_by 
+    - price 
+    - total_tickets 
+    - digits_per_ticket 
+	- style_id
+
+
+REQUEST: raffle/get_all_tickets/
+    Required parameters: 
+    - user_id  
+    - raffle_id
+RESPONSE:
+    - money_total:
+    - tickets_total:
+    - tickets_sold:
+    - tickets_reserved:
+    - tickets_available: 
+    - game_date:
+
+REQUEST: raffle/get_sold_tickets/
+    Required parameters: 
+    - user_id  
+    - raffle_id
+RESPONSE:
+    - money_total:
+    - tickets_total:
+    - tickets_sold:
+    - tickets_reserved:
+    - tickets_available: 
+    - game_date:
+
+REQUEST: raffle/get_available_tickets/
+    Required parameters: 
+    - user_id  
+    - raffle_id
+RESPONSE:
+    - money_total:
+    - tickets_total:
+    - tickets_sold:
+    - tickets_reserved:
+    - tickets_available: 
+    - game_date:
+
+REQUEST: raffle/get_reserved_tickets/
+    Required parameters: 
+    - user_id  
+    - raffle_id
+RESPONSE:
+    - money_total:
+    - tickets_total:
+    - tickets_sold:
+    - tickets_reserved:
+    - tickets_available: 
+    - game_date:
+
+
+
+REQUEST: raffle/get_stats/
+    Required parameters: 
+    - user_id  
+    - raffle_id
+
+RESPONSE:
+    - money_total:
+    - tickets_total:
+    - tickets_sold:
+    - tickets_reserved:
+    - tickets_available: 
+    - game_date:
+
+
+
+
+REQUEST: /tickets/raffle_id=id
+    Optional parameters:
+   - Status -- paid, reserved, available
+
+RESPONSE: A JSON dictionary, each of which represents one ticket, with the payment status requested. Each dictionary contains the following fields:
+    - id: integer
+    - name: integer
+	- phone: text
+	- email: text
+    - digits: integer
+	- payment_status: text
+
+
+
+REQUEST: /ticket/get/raffle_id=id?id=ticket_id
+   
+RESPONSE: A JSON dictionary:
+    - id: integer
+    - name: integer
+	- phone: text
+	- email: text
+    - digits: integer
+	- payment_status: text
+
+
+
+REQUEST: /ticket/reset/id=ticket_id?raffle_id=raffle_id
+
+RESPONSE:
+    -  action_status: succed or failed
+
+
+
+REQUEST: /ticket/confirm_payment/id=ticket_id?raffle_id=raffle_id
+
+RESPONSE:
+    -  action_status: succed or failed
+
+
+
+REQUEST: /ticket/edit/id=ticket_id?raffle_id=raffle_id
+    Optional parameters: 
+    - name: string
+	- email: string
+    - phone: string
+    - payment_status: string
+
+RESPONSE:
+    - action_status: succed or failed
+    - updated_name: string
+	- updated_email: string
+    - updated_phone: string
+    - digits: integer
+
+
+
+REQUEST: /ticket/make_reservation/id=ticket_id?raffle_id=raffle_id?name=name?phone=phone?email=email
+    Required parameters: 
+    - id: integer
+    - name: string
+	- email: string
+    - phone: string
+    - digits: integer
+
+RESPONSE:
+    - action_status: succed or failed
+    
