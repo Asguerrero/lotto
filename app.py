@@ -10,13 +10,58 @@ database = 'lotto'
 user ='valentinaguerrero'
 password ='Perro12345678?'
 
-# python3 app.py localhost 5000
+@app.route('/user/create')
+def create_user():
+    # Get arguments from url 
+    name = flask.request.args.get('name')
+    phone = flask.request.args.get('phone')
+    email = flask.request.args.get('email')
+    password = flask.request.args.get('password')
+ 
+    create_user_query = '''INSERT  INTO users (name, phone, email, password) VALUES (%s, %s, %s, %s) RETURNING id;'''
+    connection = connect_database()
+    
+    try:
+        cursor = connection.cursor()
+        cursor.execute(create_user_query,(name, phone, email, password, ) )
+        connection.commit()
+        # Fetch id of recently created user
+        for row in cursor:
+            user_id = row[0]
+       
+    except Exception as e:
+        print(e)
+        exit()
+
+    return json.dumps({"user_id": user_id})
+
+@app.route('/user/get_details')
+def get_user_details():
+   
+    user_id = flask.request.args.get('user_id')
+
+    get_user_details_query = '''SELECT name, email, phone FROM users WHERE id = %s;'''
+    connection = connect_database()
+
+    try:
+        cursor = connection.cursor()
+        cursor.execute(get_user_details_query,(user_id, ) )
+        for row in cursor:
+            user_details = {
+                'name': row[0],
+                'email': row[1],
+                'phone': row[2],
+            }
+
+    except Exception as e:
+        print(e)
+        exit()
+
+    return json.dumps(user_details)
 
 @app.route('/raffle/create')
 def create_raffle():
-    raffle_id = ''
-    # /raffle/create?user_id=56&drawing_date=2019-06-23&drawing_method=external&prize=smarthphone&total_tickets=10&numbers_per_ticket=2&style=1&price=90000&additional_information=none&payment_methods=nequi:3214963720-cash-daviplata:235346456
-    # payment_methods=nequi:3214963720-cash-daviplata:235346456
+
     user_id = flask.request.args.get('user_id')
     drawing_date = flask.request.args.get('drawing_date')
     drawing_method = flask.request.args.get('drawing_method')
@@ -28,19 +73,15 @@ def create_raffle():
     payment_methods = flask.request.args.get('payment_methods').split('-')
     additional_information = flask.request.args.get('additional_information')
 
+    create_raffle_query = '''INSERT  INTO raffles (user_id, drawing_date, drawing_method, prize, price, total_tickets, numbers_per_ticket, style, additional_information) 
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id;'''
 
     connection = connect_database()
-    create_raffle_query = '''INSERT  INTO raffles (user_id, drawing_date, drawing_method, prize, price, total_tickets, numbers_per_ticket, style, additional_information) 
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);'''
-
-    get_new_raffle_id_query = '''SELECT id FROM raffles WHERE user_id = %s AND drawing_date = %s AND drawing_method = %s AND prize = %s AND price = %s AND total_tickets = %s 
-    AND numbers_per_ticket = %s AND style = %s ;'''
 
     try:
         cursor = connection.cursor()
         cursor.execute(create_raffle_query,(user_id, drawing_date, drawing_method, prize, price, total_tickets, numbers_per_ticket, style, additional_information, ) )
         connection.commit()
-        cursor.execute(get_new_raffle_id_query, (user_id, drawing_date, drawing_method, prize, price, total_tickets, numbers_per_ticket, style , ))
         for row in cursor:
             raffle_id =  row[0]
             
@@ -48,25 +89,25 @@ def create_raffle():
         print(e)
         exit()
 
+    # Call additional helper functions to set payment methods, create tickets and assign a number to each ticket
     create_tickets(total_tickets, raffle_id)
     create_numbers_for_tickets(raffle_id, total_tickets, numbers_per_ticket)
     set_raffle_payment_methods(raffle_id, payment_methods)
-
 
     return json.dumps({"raffle_id": raffle_id})
 
 
 @app.route('/raffle/get_details')
 def get_raffle_details():
-    # /raffle/get_details?raffle_id=1
     raffle_id = flask.request.args.get('raffle_id')
     raffle = get_raffle(raffle_id)
     return json.dumps(raffle)
 
 @app.route('/raffle/get_stats')
 def get_raffle_stats():
-    # /raffle/get_stats?raffle_id=1
     raffle_id = flask.request.args.get('raffle_id')
+    
+    # Get raffle details 
     raffle = get_raffle(raffle_id)
 
     available_tickets = len(get_raffle_tickets_according_to_payment_status(raffle_id, 'available'))
@@ -90,23 +131,26 @@ def get_raffle_stats():
 
 @app.route('/raffle/get_tickets')
 def get_raffle_tickets():
-    # /raffle/get_tickets?raffle_id=1&payment_status=available
     raffle_id = flask.request.args.get('raffle_id')
     payment_status = flask.request.args.get('payment_status')
+    
+    # Get all tickets if payment status is unspecified
     if payment_status is None:
         tickets = get_all_raffle_tickets(raffle_id)
+    
+    # Get only tickets that match the required payment status
     else:
         tickets = get_raffle_tickets_according_to_payment_status(raffle_id, str(payment_status))
+    
     return json.dumps(tickets)
 
 
 @app.route('/raffle/delete')
 def delete_raffle():
-    # /raffle/delete?raffle_id=1
     raffle_id = flask.request.args.get('raffle_id')
     tickets = get_all_raffle_tickets(raffle_id)
 
-    # Delete all numbers related to each raffle's ticket
+    # Delete numbers related to all raffle's tickets
     for ticket in tickets:
         delete_ticket_numbers(ticket['id'])
 
@@ -117,28 +161,28 @@ def delete_raffle():
 
     delete_queries = [delete_raffle_tickets_query, delete_raffle_payment_methods_query, delete_raffle_query]
     connection = connect_database()
+
     for delete_query in delete_queries:
         try:
             cursor = connection.cursor()
             cursor.execute(delete_query,(raffle_id, ) )
             connection.commit()
+            response_status_code = 200
 
         except Exception as e:
             print(e)
             exit()
    
-    return json.dumps('All records realted to raffle were deleted ')
+    return json.dumps({'status_code': response_status_code})
 
 @app.route('/ticket/get_details')
 def get_ticket():
-    # /ticket/get_details?ticket_id=1
     ticket_id = flask.request.args.get('ticket_id')
     ticket = get_ticket_by_id(ticket_id)
     return json.dumps(ticket)
 
 @app.route('/ticket/make_reservation')
 def make_ticket_reservation():
-    # /ticket/get_details?ticket_id=1
     ticket_id = flask.request.args.get('ticket_id')
     name = flask.request.args.get('name')
     email = flask.request.args.get('email')
@@ -146,6 +190,7 @@ def make_ticket_reservation():
 
     ticket = get_ticket_by_id(ticket_id)
 
+    # Users can only reserve tickets that are available
     if ticket['payment_status'] == 'available':
         make_reservation_query = '''UPDATE tickets SET payment_status='reserved', name = %s, email = %s, phone= %s WHERE id=%s;'''
         connection = connect_database()
@@ -154,65 +199,56 @@ def make_ticket_reservation():
             cursor = connection.cursor()
             cursor.execute(make_reservation_query,(name, email, phone, ticket_id,) )
             connection.commit()
-            status = {
-                'message' : 'records successfully updated',
-                'status': 200
-            }
+            response_status_code = 200
                 
         except Exception as e:
             print(e)
             exit()
     else:
-        status = {
-                'message' : 'ticket is not available',
-                'status': 400
-            }
+        response_status_code = 400
+        
 
-    return json.dumps(status)
+    return json.dumps({'status_code': response_status_code})
 
 @app.route('/ticket/edit')
 def edit_ticket():
-    # /ticket/edit?ticket_id=1&email=vale@hotmail.com&phone=3214963720
     ticket_id = flask.request.args.get('ticket_id')
     name = flask.request.args.get('name')
     email = flask.request.args.get('email')
     phone = flask.request.args.get('phone')
     payment_status = flask.request.args.get('payment_status')
 
-    # Create set portion of query with optional parameters
+    # Create portion of query with optional parameters
     optional_parameters = {'name': name, 'email': email, 'phone': phone, 'payment_status': payment_status}
-    parameters_query = []
+    query_values = []
 
     for parameter in optional_parameters:
         if optional_parameters[parameter] is not None:
+            # Example: name = 'Jhon'
             assign_paramater_to_value_string = f"{parameter} = '{optional_parameters[parameter]}'"
-            parameters_query.append(assign_paramater_to_value_string)
+            query_values.append(assign_paramater_to_value_string)
 
-    parameters_query = ', '.join(parameters_values)
+    query_values = ', '.join(parameters_values)
 
-    edit_ticket_query = '''UPDATE tickets SET {} WHERE id=%s;'''.format(parameters_query)
+    edit_ticket_query = '''UPDATE tickets SET {} WHERE id=%s;'''.format(query_values)
     connection = connect_database()
     
-    # error checking: if no optional parameters are given
     try:
         cursor = connection.cursor()
         cursor.execute(edit_ticket_query,(ticket_id,) )
         connection.commit()
-        status = {
-            'message' : 'records successfully updated',
-            'status': 200
-        }
+        response_status_code = 200
             
     except Exception as e:
         print(e)
         exit()
     
-    return json.dumps(status)
+    return json.dumps({'status_code': response_status_code})
 
 @app.route('/ticket/reset')
 def reset_ticket():
-    # /ticket/reset?ticket_id=1
     ticket_id = flask.request.args.get('ticket_id')
+
     reset_ticket_query = '''UPDATE tickets SET name= NULL, email= NULL, phone=NULL, payment_status='available' WHERE id=%s;'''
     connection = connect_database()
     
@@ -220,23 +256,20 @@ def reset_ticket():
         cursor = connection.cursor()
         cursor.execute(reset_ticket_query,(ticket_id,) )
         connection.commit()
-        status = {
-            'message' : 'records successfully updated',
-            'status': 200
-        }
+        response_status_code = 200
             
     except Exception as e:
         print(e)
         exit()
     
-    return json.dumps(status)
+    return json.dumps({'status_code': response_status_code})
 
 @app.route('/ticket/confirm_payment')
 def confirm_ticket_payment():
-    # /ticket/confirm_payment?ticket_id=1
     ticket_id = flask.request.args.get('ticket_id')
     ticket = get_ticket_by_id(ticket_id)
     
+    # For a ticket to have 'sold' as payment status, it should have all the information about te buyer/participant
     if (ticket['name'] is not None and ticket['email'] is not None and ticket['phone'] is not None):
         confirm_payment_query = '''UPDATE tickets SET payment_status='sold' WHERE id=%s;'''
         connection = connect_database()
@@ -245,51 +278,19 @@ def confirm_ticket_payment():
             cursor = connection.cursor()
             cursor.execute(confirm_payment_query,(ticket_id,) )
             connection.commit()
-            status = {
-                'message' : 'records successfully updated.',
-                'status': 200
-            }
+            response_status_code = 200
                 
         except Exception as e:
             print(e)
             exit()
     else:
-        status = {
-                'message' : 'records cannot be updated. Essential participant fields are missing',
-                'status': 400
-        }
+        response_status_code = 400
 
     
-    return json.dumps(status)
+    return json.dumps({'status_code': response_status_code})
 
-@app.route('/user/create')
-def create_user():
-    # /user/create?name=Sol_Camila&email=valentinaguerrero.as@hotmail.com&password=1234&phone=32124572389
-    name = flask.request.args.get('name')
-    phone = flask.request.args.get('phone')
-    email = flask.request.args.get('email')
-    password = flask.request.args.get('password')
- 
-    connection = connect_database()
-    create_user_query = '''INSERT  INTO users (name, phone, email, password) VALUES (%s, %s, %s, %s);'''
-
-    success_message = {
-        'message' : 'records inserted successfully into database',
-        'status': 200
-    }
-
-    try:
-        cursor = connection.cursor()
-        cursor.execute(create_user_query,(name, phone, email, password, ) )
-        connection.commit()
-       
-    except Exception as e:
-        print(e)
-        exit()
-
-    return json.dumps(success_message)
-
-
+# --------- Admin functions ---------
+# These functions will only be used by the admin of the application 
 @app.route('/users/get_all')
 def get_all_users():
     users = []
@@ -391,7 +392,7 @@ def get_all_numbers():
     return json.dumps(tickets_numbers)
 
 
-# Helper functions
+# --------- Helper functions ---------
 
 # DB function
 def connect_database():
@@ -432,6 +433,7 @@ def get_raffle(raffle_id):
         exit()
 
     return raffle
+
 
 # Tickets functions
 def create_tickets(total_tickets, raffle_id):
@@ -696,7 +698,6 @@ def set_raffle_payment_methods(raffle_id, payment_methods):
             exit()
 
     
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('A sample Flask application/API')
     parser.add_argument('host', help='the host on which this application is running')
