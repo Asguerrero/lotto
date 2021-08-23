@@ -13,18 +13,19 @@ CREATE TABLE raffles(
 	drawing_date date,
     drawing_method text,
 	prize text,
-    winner text,
+    winner_ticket_id integer,
     price integer,
     total_tickets integer,
     numbers_per_ticket integer,
-	style integer
+	style integer,
+    additional_information text
 );
 
 
 CREATE TABLE tickets(
 	id SERIAL,
 	raffle_id integer,
-    name integer, 
+    name text, 
 	phone text,
 	email text,
 	payment_status text
@@ -36,12 +37,13 @@ CREATE TABLE tickets_numbers(
     ticket_number integer
 );
 
-CREATE TABLE payment_method{
+CREATE TABLE payment_methods(
     id SERIAL,
-    method text,
-}
+    method text
+);
 
-CREATE TABLE raffles_payment_methods{
+CREATE TABLE raffles_payment_methods(
     raffle_id integer,
-    payment_method integer
-}
+    payment_method_id integer,
+    details text
+);

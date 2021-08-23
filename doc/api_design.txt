@@ -1,3 +1,4 @@
+------------------------------------------------------------------
 REQUEST: user/create/
     Required parameters: 
     - name: string
@@ -6,150 +7,128 @@ REQUEST: user/create/
     - password: string
 
 RESPONSE: 
-   status
+   - user_id: integer
 
-
-REQUEST: raffle/create/
+------------------------------------------------------------------
+REQUEST: user/get_details/
     Required parameters: 
-    - user_id  
-    - game_date
-    - prize
-	- winner_determined_by 
-    - price 
-    - total_tickets 
-    - numbers_per_ticket 
-	- style_id
+    - user_id: integer
 
 RESPONSE: 
-   id -- (integer) id of the raffle created
+    - name: string
+    - phone: string
+    - email: string 
 
-ACTIONS:
-    Creates raffle, tickets and digits
+------------------------------------------------------------------
+REQUEST: raffle/create/
+    Required parameters: 
+    - user_id: integer
+    - drawing_date: date (yyyy-mm-dd)
+    - drawing_method: string
+    - prize: string
+    - price: integer 
+    - total_tickets: integer
+    - numbers_per_ticket: integer
+	- style: integer
+    - payment_methods: string (payment_method:details). Each method should be separated by '-'
+    
+    Optional parameters:
+    - additional_information
 
+RESPONSE: 
+    - raffle_id: integer 
 
+------------------------------------------------------------------
+REQUEST: raffle/delete/
+    Required parameters: 
+    - raffle_id: integer
 
+RESPONSE: 
+   - status_code: integer
+
+------------------------------------------------------------------
 REQUEST: raffle/get_details/
     Required parameters: 
     - raffle_id
     
 RESPONSE: 
-    - id -- (integer) id of the raffle created
-    - game_date
-    - prize
-	- winner_determined_by 
-    - price 
-    - total_tickets 
-    - digits_per_ticket 
-	- style_id
+    - id: integer
+    - user_id: integer
+    - creation_date: date
+    - drawing_date: date
+    - drawing_method: string
+    - prize: string
+    - winner_ticket_id: integer
+    - price: integer
+    - total_tickets: integer
+    - numbers_per_ticket: integer
+    - style: integer
+    - additional_information: string
+    - payment_methods: list of dictionaries. Dictionary keys: 'method' and 'details'
 
-
-REQUEST: raffle/get_all_tickets/
-    Required parameters: 
-    - user_id  
-    - raffle_id
-RESPONSE:
-    - money_total:
-    - tickets_total:
-    - tickets_sold:
-    - tickets_reserved:
-    - tickets_available: 
-    - game_date:
-
-REQUEST: raffle/get_sold_tickets/
-    Required parameters: 
-    - user_id  
-    - raffle_id
-RESPONSE:
-    - money_total:
-    - tickets_total:
-    - tickets_sold:
-    - tickets_reserved:
-    - tickets_available: 
-    - game_date:
-
-REQUEST: raffle/get_available_tickets/
-    Required parameters: 
-    - user_id  
-    - raffle_id
-RESPONSE:
-    - money_total:
-    - tickets_total:
-    - tickets_sold:
-    - tickets_reserved:
-    - tickets_available: 
-    - game_date:
-
-REQUEST: raffle/get_reserved_tickets/
-    Required parameters: 
-    - user_id  
-    - raffle_id
-RESPONSE:
-    - money_total:
-    - tickets_total:
-    - tickets_sold:
-    - tickets_reserved:
-    - tickets_available: 
-    - game_date:
-
-
-
+------------------------------------------------------------------
 REQUEST: raffle/get_stats/
     Required parameters: 
-    - user_id  
     - raffle_id
 
 RESPONSE:
-    - money_total:
-    - tickets_total:
-    - tickets_sold:
-    - tickets_reserved:
-    - tickets_available: 
-    - game_date:
+    - sold tickets total: integer
+    - sold tickets percentage: double
+    - money from sold tickets: double
+    - reserved tickets total: integer
+    - reserved tickets total: integer
+    - reserved tickets percentage: double
+    - money from reserved tickets: double
+    - available tickets total: integer
+    - available tickets percentage: double
+    - drawing_date: date
 
-
-
-
-REQUEST: /tickets/raffle_id=id
+------------------------------------------------------------------
+REQUEST: raffle/get_tickets/
+    Required parameters:  
+    - raffle_id: integer
     Optional parameters:
-   - Status -- paid, reserved, available
+    - payment_status: string (sold, available, reserved)
 
-RESPONSE: A JSON dictionary, each of which represents one ticket, with the payment status requested. Each dictionary contains the following fields:
+RESPONSE:
     - id: integer
     - name: integer
-	- phone: text
-	- email: text
-    - digits: integer
-	- payment_status: text
+	- phone: string
+	- email: string
+    - numbers: list
+	- payment_status: string
 
-
-
-REQUEST: /ticket/get/raffle_id=id?id=ticket_id
+------------------------------------------------------------------
+REQUEST: /ticket/get_details/
+    Required parameters:  
+        - ticket_id: integer
    
 RESPONSE: A JSON dictionary:
     - id: integer
     - name: integer
-	- phone: text
-	- email: text
-    - digits: integer
-	- payment_status: text
+	- phone: string
+	- email: string
+    - numbers: list
+	- payment_status: string
 
-
-
-REQUEST: /ticket/reset/id=ticket_id?raffle_id=raffle_id
-
-RESPONSE:
-    -  action_status: succed or failed
-
-
-
-REQUEST: /ticket/confirm_payment/id=ticket_id?raffle_id=raffle_id
+------------------------------------------------------------------
+REQUEST: /ticket/reset/
+    Required parameters:  
+        - ticket_id: integer
 
 RESPONSE:
-    -  action_status: succed or failed
+    -  status_code: integer
 
+------------------------------------------------------------------
+REQUEST: /ticket/confirm_payment/
+    Required parameters:  
+            - ticket_id: integer
 
+RESPONSE:
+    -  status_code: integer
 
-REQUEST: /ticket/edit/id=ticket_id?raffle_id=raffle_id
+------------------------------------------------------------------
+REQUEST: /ticket/edit/
     Optional parameters: 
     - name: string
 	- email: string
@@ -161,18 +140,16 @@ RESPONSE:
     - updated_name: string
 	- updated_email: string
     - updated_phone: string
-    - digits: integer
+    - numbers: list
 
-
-
-REQUEST: /ticket/make_reservation/id=ticket_id?raffle_id=raffle_id?name=name?phone=phone?email=email
+------------------------------------------------------------------
+REQUEST: /ticket/make_reservation/
     Required parameters: 
-    - id: integer
+    - ticket_id: integer
     - name: string
 	- email: string
     - phone: string
-    - digits: integer
 
 RESPONSE:
-    - action_status: succed or failed
+    - status_code: integer
     
