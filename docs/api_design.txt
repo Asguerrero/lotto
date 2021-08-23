@@ -26,6 +26,17 @@ EXAMPLE QUERY:
     - /user/get_details?user_id=1
 
 ------------------------------------------------------------------
+REQUEST: user/get_raffles/
+    Required parameters: 
+    - user_id: integer
+
+RESPONSE: 
+    - user_raffles: list. Each entry contains the id of a raffle 
+
+EXAMPLE QUERY:
+    - /user/get_raffles?user_id=1
+
+------------------------------------------------------------------
 REQUEST: raffle/create/
     Required parameters: 
     - user_id: integer

@@ -59,6 +59,26 @@ def get_user_details():
 
     return json.dumps(user_details)
 
+@app.route('/user/get_raffles')
+def get_user_raffles():
+   
+    user_id = flask.request.args.get('user_id')
+    user_raffles = []
+    get_user_raffles_query = '''SELECT id FROM raffles WHERE user_id = %s;'''
+    connection = connect_database()
+
+    try:
+        cursor = connection.cursor()
+        cursor.execute(get_user_raffles_query,(user_id, ) )
+        for row in cursor:
+            user_raffles.append(row[0])
+            
+    except Exception as e:
+        print(e)
+        exit()
+
+    return json.dumps({'user_raffles' : user_raffles})
+
 @app.route('/raffle/create')
 def create_raffle():
 
