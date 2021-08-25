@@ -1,0 +1,240 @@
+body{
+  font-family: 'Open Sans', sans-serif;
+}
+
+a{
+  text-decoration: none;
+  color: #4D554F;
+}
+
+.logo{
+  margin-top: 1rem;
+  width: 6rem;
+}
+
+.flex{
+  display: flex;
+}
+.space-evenly{
+  justify-content: space-evenly;
+}
+
+.space-between{
+  justify-content: space-between;
+}
+
+.align-center{
+  align-items: center;
+
+}
+
+.align-flex-start{
+  align-items: flex-start;
+
+}
+.center{
+  justify-content: space-around;
+  align-items: center;
+}
+
+.text-center{
+  text-align: center;
+}
+
+.header-container{
+  display: grid;
+  grid-template-columns: 20% 30% 40%;
+  font-size: 1.2rem;
+  font-style: normal;
+  font-weight: normal;
+}
+
+.header-options-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+}
+
+.header-sign-in-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+
+}
+
+.sign-in-separator{
+  margin: 0px 10px;
+}
+
+.form-subtitle{
+  font-weight: bold;
+  font-size: 1.5rem;
+  line-height: 30px;
+  color: #4D554F;
+ 
+}
+
+.form-payment-info{
+  font-size: 1.2rem;
+  line-height: 30px;
+  margin-top: 0;
+  font-weight: 400;
+  
+}
+
+.create-raffle-form label{
+  font-size: 1.15rem;
+  font-weight: 300;
+  margin: 0;
+  margin-bottom: 2rem;
+}
+
+.form-input{
+  background: rgba(196, 196, 196, 0.41);
+  border-radius: 10px;
+  height: 2rem;
+  width: 70%;
+  border: none;
+  font-size: 1.1rem;
+}
+
+.main-button{
+  background: #84CD62;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  border: none;
+  padding: 15px 20px;
+  font-size: 1.1rem;
+}
+
+.form-question{
+  font-style: normal;
+  font-weight: normal;
+  font-size: 1.4rem;
+  line-height: 30px;
+  margin-top: 0;
+}
+
+.w-60{
+  width: 55%;
+}
+
+.w-70{
+  width: 70%;
+}
+
+.w-50{
+  width: 50%;
+}
+
+.w-80{
+  width: 80%;
+}
+
+.w-100{
+  width: 100%;
+}
+
+.margin-top-8{
+  margin-top: 8%;
+}
+
+.margin-top-5{
+  margin-top: 5%;
+}
+
+.margin-top-6{
+  margin-top: 6%;
+}
+
+.margin-top-5{
+  margin-top: 6%;
+}
+
+.margin-top-2{
+  margin-top: 2%;
+}
+
+.margin-top-3{
+  margin-top: 3%;
+}
+
+.gray-title{
+  color: #5A665E;
+}
+
+.gray{
+  background: rgba(196, 196, 196, 0.41);
+}
+
+.circle{
+  background-color: white;
+  width: 10rem;
+  height: 10rem;
+  border-radius: 100%;
+}
+
+.how-it-works-grid{
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+
+}
+
+.text-align-left{
+  text-align: right;
+}
+
+.how-it-works-item{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.checkbox{
+  font-size: 1.1rem;
+  margin: 1.7rem 0.5rem;
+}
+.checkbox input{
+   width: 1.3rem;
+   height: 1.3rem;
+}
+
+.form-payment-methods-grid{
+  display: grid;
+  grid-template-columns: 65% 35%;
+  grid-column-gap: 15px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
