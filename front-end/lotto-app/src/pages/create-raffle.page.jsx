@@ -1,7 +1,8 @@
 import React from 'react';
 import Button from '../components/button.component';
 import PaymentMethodsInfo from '../components/form-sections/payment-methods-info.component'
-
+import Question from '../components/form-sections/basic-question.component.jsx'
+import BlueTicketPreview from '../components/ticket-previews/blue-ticket-preview.component'
 
 class CreateRafflePage extends React.Component {
     constructor(){
@@ -17,7 +18,8 @@ class CreateRafflePage extends React.Component {
             price: 0,
             payment_methods: {},
             other_payment_method_checkbox: false,
-            other_payment_method: ''
+            other_payment_method: '',
+            user: {name: '', email: '', phone: ''},
         };
     }
 
@@ -77,6 +79,13 @@ class CreateRafflePage extends React.Component {
         }
         
         console.log(payment_methods)
+    }
+
+    handleUserInfoChange= event => {
+        const {name, value } = event.target;
+        const {user} = this.state;
+        user[name]= value;
+
     }
 
 
@@ -235,10 +244,50 @@ class CreateRafflePage extends React.Component {
                             <Button type='button' onClick={this.handleReturn}>Atras</Button>
                             <Button type='submit'>Continuar</Button>
                         </div>
+
+                    </form>
+                </div>
+
+
+            )
+
+        case 4:
+            return(
+
+                <div className='flex center create-raffle-form'>
+                    <form className='w-60' onSubmit={this.handleSubmit}>
+                        <h2 className='form-subtitle '>Fanstastico! Lo unico que nos falta son los datos del o la responsable de la rifa que apareceran en cada boleta</h2>
+                        <div className='margin-top-5'>
+                            <Question prompt='Nombre:' name='name' value={this.state.user.name}  onChange={this.handleUserInfoChange}/>
+                            <Question prompt='Telefono: ' name='phone' value={this.state.user.phone}  onChange={this.handleUserInfoChange}/>
+                            <Question prompt='Correo electronico: '  name='email' value={this.state.user.email}  onChange={this.handleUserInfoChange}/>
+                        </div>
+                        <div className='w-100 flex center margin-top-5 '>
+                            <Button type='button' onClick={this.handleReturn}>Atras</Button>
+                            <Button type='submit'>Continuar</Button>
+                        </div>
                         
                     </form>
                 </div>
 
+            )
+
+        case 5:
+            return(
+
+                <div className='flex center create-raffle-form'>
+                    <form className='w-60' onSubmit={this.handleSubmit}>
+                        <h2 className='form-subtitle '>Ultimo toque... Elige el estilo que mas se ajuste a tus necesidades</h2>
+                        <div className='margin-top-5'>
+                        <BlueTicketPreview prize={this.state.prize}  price={this.state.price} drawing_date={this.state.drawing_date} drawing_method={this.state.drawing_method}/>
+                        </div>
+                        <div className='w-100 flex center margin-top-5 '>
+                            <Button type='button' onClick={this.handleReturn}>Atras</Button>
+                            <Button type='submit'>Continuar</Button>
+                        </div>
+                        
+                    </form>
+                </div>
 
             )
         }

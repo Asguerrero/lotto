@@ -208,7 +208,59 @@ a{
   grid-template-columns: 65% 35%;
   grid-column-gap: 15px;
 }
+.blue-ticket-div{
+  border: 3px solid #5C698A;
+  box-sizing: border-box;
+  border-radius: 5px;
+  
+  
+}
 
+.blue-ticket-background{
+  background-color: #5C698A;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.blue-ticket-background h2{
+  font-family: 'Roboto';
+    font-style: normal;
+    font-weight: bold;
+    font-size: 2rem;
+    color: #FFFCFC;
+    padding: 0px 1.2rem;
+    text-align: center;
+}
+.blue-ticket-background h3{
+    color: #FFFCFC;
+    font-size: 1.5rem;
+}
+
+.blue-ticket-general-info{
+  padding: 0 1.3rem;
+}
+
+.blue-ticket-grid{
+  display: grid;
+  grid-template-columns: 40% 60%;
+}
+.blue-ticket-participant-info{
+  display:grid;
+  grid-template-columns: 31% 31% 31% 7%;
+  align-items: center;
+  border-top: 3px solid #5C698A;
+  box-sizing: border-box;
+}
+
+.blue-ticket-number{
+  height: 100%;
+  width: 100%;
+  background-color: #5C698A;
+  color: white;
+
+}
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
