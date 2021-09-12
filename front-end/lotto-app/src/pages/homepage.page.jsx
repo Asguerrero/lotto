@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '../components/button.component'
+import { Link } from 'react-router-dom';
 
 const HomePage = () => (
     <div >
@@ -7,7 +8,7 @@ const HomePage = () => (
             <h1 className='text-center gray-title'>DIGITALIZA TUS RIFAS Y ENFOCATE EN LO QUE MAS IMPORTA</h1>
             <div className='flex center '>
                 <div className='w-50 flex space-evenly margin-top-8'>
-                    <Button>Crear nueva rifa</Button>
+                    <Button> <Link className='option' to='/create-raffle'>Crear nueva rifa</Link></Button>  
                     <Button>Ya tengo una cuenta</Button>
                 </div>
             </div>

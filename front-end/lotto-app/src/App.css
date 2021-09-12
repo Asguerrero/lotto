@@ -261,6 +261,21 @@ a{
   color: white;
 
 }
+
+.ticket-preview{
+  width: 30%;
+  background-color: #84CD62;
+  margin: 1.2rem; 
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-around;
+
+}
+
+.tickets-page{
+  flex-direction: column;
+  
+}
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

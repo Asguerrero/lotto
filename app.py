@@ -3,12 +3,20 @@ import random
 import flask
 import json
 import argparse
+from flask_cors import CORS
 
 app = flask.Flask(__name__) 
+CORS(app)
 
 database = 'lotto'
 user ='valentinaguerrero'
 password ='Perro12345678?'
+
+
+@app.route('/')
+def welcome():
+    return json.dumps('welcome')
+
 
 @app.route('/user/create')
 def create_user():
